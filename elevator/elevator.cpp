@@ -23,7 +23,9 @@ The modeling for the two kinds of requests as the following.
 			
 			secondly checks if anyone inside wants to get out by popping the front of "destFloorIn", 
 			then it unloads the user.
-	d. After necessary loading/unloading, the elevator determines the next direction to move
+	d. After necessary loading/unloading, the elevator determines the next direction to move by checking
+	   the next request it is going to fulfill. The outside requests have higher priority than the 
+	   inside requests.
 
 
 Potential drawback of the design by using deque: 
@@ -37,9 +39,6 @@ Potential drawback of the design by using deque:
 	floor3 to load the 3rd user. The way how it fulfill the requests are really inconvenient.
 	
 *********************************************************************************************************/
-
-
-
 #include <iostream>
 #include <random>
 #include <vector>
@@ -125,6 +124,8 @@ public:
 		else if (currFloor == minFloor)
 			currMoveDir = UP;
 		else{
+			// check the next request to be fulfilled to determine next direction
+			// outside requests have higher priority than inside requests
 			if (!destFloorOut.empty()){
 				if (destFloorOut.front().first > currFloor)
 					currMoveDir = UP;
@@ -158,6 +159,7 @@ public:
 		// decide which direction for next move
 		nextDirection();
 		
+		// move next
 		if (currMoveDir == UP)
 			moveUp();
 		else
@@ -182,6 +184,12 @@ public:
 		
 		for (int i = 0; i < numOfElevators; i++)
 			elevators.push_back(new Elevator(elevatorCapacity, num_floors, 1));
+	}
+	
+	~Controller(){
+		for (int i = 0; i < numOfElevators; i++)
+			delete elevators[i];
+		cout << "cleared the controller!" << endl;
 	}
 	
 	void loadRequests(vector<pair<int, int>>& req){
