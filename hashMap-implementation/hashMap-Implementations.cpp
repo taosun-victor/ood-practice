@@ -54,7 +54,7 @@ namespace std{
 }
 
 
-// Node in the linked list
+// =================== Node in the linked list ==============================
 template <typename K, typename V>
 class Node {
 private:
@@ -91,7 +91,7 @@ public:
 	}
 }; 
 
-// hashMap implementations
+// ====================== hashMap implementations ============================
 template <typename K, typename V>
 class HashMap {
 private:
@@ -131,11 +131,11 @@ public:
 	bool putIntoArray(const K& key, const V& val, int capacity, vector<Node<K, V>*>& vec){
 		int idx = hash(key, capacity);
 
-		Node<K, V>* prev = NULL;
+		//Node<K, V>* prev = NULL;
 		Node<K, V>* curr = vec[idx];
 		
 		while(curr && curr->getKey() != key){
-			prev = curr;
+			//prev = curr;
 			curr = curr->getNext();
 		}
 		
@@ -143,6 +143,13 @@ public:
 			curr->setValue(val);
 			return false;
 		}
+		else{ // put to the head of vec[idx] could introduce fewer corner cases
+			Node<K, V>* node = new Node<K, V>(key, val);
+			node->setNext(vec[idx]);
+			vec[idx] = node;
+			return true;
+		}
+		/*
 		else if (prev == NULL){
 			vec[idx] = new Node<K, V>(key, val);
 			return true;
@@ -150,7 +157,7 @@ public:
 		else{
 			prev->setNext(new Node<K, V>(key, val));
 			return true;
-		}		
+		}*/		
 	}
 	
 	
@@ -218,7 +225,7 @@ public:
 };
 
 
-
+// =================== TEST ==========================
 int main(){
 	HashMap<Coordinate, string> myMap;
 
