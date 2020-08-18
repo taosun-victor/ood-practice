@@ -3,6 +3,58 @@
 
 using namespace std;
 
+// ============== custom class, test purpose ==================
+class Coordinate {
+private:
+	int x;
+	int y;
+	
+public:
+	Coordinate(){
+		x = 0;
+		y = 0;
+	}
+	
+	Coordinate(int x, int y){
+		this->x = x;
+		this->y = y;
+	}
+	
+	int getX(){
+		return this->x;
+	}
+	
+	int getY(){
+		return this->y;
+	}
+	
+	Coordinate& operator=(const Coordinate& other){
+		this->x = other.x;
+		this->y = other.y;
+		return *this;
+	}
+	
+	bool operator==(Coordinate other){
+		return other.x== this->x && other.y== this->y;
+	}
+	
+	bool operator!=(Coordinate other){
+		return other.x != this->x || other.y != this->y;
+	}
+};
+
+
+namespace std{
+	template<>
+	struct hash<Coordinate>{
+		size_t operator() (Coordinate coord) const {
+			return hash<int>()(coord.getX()) * 101 + hash<int>()(coord.getY());
+		}
+	};
+}
+
+
+// Node in the linked list
 template <typename K, typename V>
 class Node {
 private:
@@ -39,7 +91,7 @@ public:
 	}
 }; 
 
-
+// hashMap implementations
 template <typename K, typename V>
 class HashMap {
 private:
@@ -51,8 +103,8 @@ private:
 	int capacity;
 	
 public:
-	unsigned int hash(const K& key, int tableSize){
-		return reinterpret_cast<int>(key) % tableSize;
+	unsigned int hash(K key, int tableSize){
+		return std::hash<K>()(key) % tableSize;
 	}
 	
 	HashMap(){
@@ -141,7 +193,7 @@ public:
 	}
 	
 	void rehash(){
-		cout << "Rehashing: -------------" << endl;
+		//cout << "Rehashing: -------------" << endl;
 		int newCapacity = 2 * capacity;
 		vector<Node<K, V>*> newArray(newCapacity, NULL);
 		
@@ -166,82 +218,53 @@ public:
 };
 
 
+
 int main(){
-	HashMap<int, string> myMap;
+	HashMap<Coordinate, string> myMap;
+
+	Coordinate coord1(1, 2);	
+	Coordinate coord2(2, 3);
+	Coordinate coord3(3, 4);
+	Coordinate coord4(1, 2);
 	
-	myMap.put(2, "folks");
-	myMap.put(3, "NRA");
-	myMap.put(4, "Jacobi");
+	Coordinate coord5(1, 20);	
+	Coordinate coord6(2, 30);
+	Coordinate coord7(30, 4);
+	Coordinate coord8(6, 3);
+	Coordinate coord9(300, 4);	
+	Coordinate coord10(16, 3);
+	Coordinate coord11(3, 4);
+	Coordinate coord12(1, 24);	
 	
-	myMap.put(5, "lion");
-	myMap.put(15, "lion15");
-	myMap.put(25, "lion25");
-	myMap.put(35, "lion35");
+
+	myMap.put(coord1, "folks");
+	myMap.put(coord2, "NRA");
+	myMap.put(coord3, "SBSB");
+	cout << myMap.get(coord1) << " " << 
+	        myMap.get(coord2) << " " << 
+			myMap.get(coord3) << endl;
+			
+	myMap.put(coord4, "ctmd");
+	cout << myMap.get(coord1) << " " << 
+	        myMap.get(coord2) << " " << 
+			myMap.get(coord3) << " " <<
+			myMap.get(Coordinate(10, 20)) << endl;
 	cout << myMap.getSize() << endl;
 	
+	myMap.put(coord5, "some");
+	myMap.put(coord6, "random");
+	myMap.put(coord7, "stuff");
+	myMap.put(coord8, "to");
+	myMap.put(coord9, "increase");
+	myMap.put(coord10, "size");	
+	myMap.put(coord11, "of");
+	myMap.put(coord12, "hashMap");
+	cout << myMap.get(coord5) << " " << 
+	        myMap.get(coord6) << " " << 
+			myMap.get(coord7) << " " <<
+			myMap.get(Coordinate(6, 3)) << endl;
+	cout << myMap.getSize() << endl;	
 	
-	
-	
-	myMap.put(6, "wd");
-	myMap.put(36, "ff");
-	myMap.put(56, "some");
-	myMap.put(16, "random");
-	myMap.put(1, "things");
-	myMap.put(0, "noav");
-	cout << myMap.getSize() << endl;
-	
-	
-	
-	
-	cout << myMap.get(5) << endl;
-	cout << myMap.get(15) << endl;
-	cout << myMap.get(25) << endl;
-	cout << myMap.get(35) << endl;
-	
-	cout << myMap.get(6) << endl;
-	cout << myMap.get(16) << endl;
-	cout << myMap.get(7) << endl;
-	cout << myMap.get(1) << endl;
-	
-	myMap.put(6, "wdc");
-	myMap.put(16, "not that random");
-	myMap.put(7, "ctmd nra");
-	myMap.put(1, "things arefull");	
-	cout << myMap.getSize() << endl;
-	
-	
-	
-	
-	myMap.put(5, "lion-new");
-	myMap.put(15, "lion15-new");
-	myMap.put(25, "lion25-new");
-	myMap.put(35, "lion35-new");
-	myMap.put(2, "folks-new");
-	myMap.put(3, "NRA-new");
-	myMap.put(4, "Jacobi=new");
-
-	cout << endl;
-	cout << myMap.get(6) << endl;
-	cout << myMap.get(16) << endl;
-	cout << myMap.get(7) << endl;
-	cout << myMap.get(1) << endl;
-
-	cout << myMap.get(5) << endl;
-	cout << myMap.get(15) << endl;
-	cout << myMap.get(25) << endl;
-	cout << myMap.get(35) << endl;	
-
-	
-	myMap.remove(5);
-	myMap.remove(15);
-	myMap.remove(25);
-	myMap.remove(35);
-
-	cout << myMap.get(5) << endl;
-	cout << myMap.get(15) << endl;
-	cout << myMap.get(25) << endl;
-	cout << myMap.get(35) << endl;	
-	cout << myMap.getSize() << endl;
 }
 
 
