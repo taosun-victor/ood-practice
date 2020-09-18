@@ -71,6 +71,21 @@ public:
     void addChild(Entry* child){
         children[child->getName()] = child;
     }
+    
+    void search(vector<string>& res){
+    	if (this->isDirectory() == false){
+    		res.push_back(this->getName());
+    		return;
+		}
+		
+		// some problems here ...
+		// when the child node of current node is a File node,
+		// casting it to Directory* is not compatible
+		// However, the dev C++ compiler looks OK with this
+		// while the C++ compiler on Leetcode will abort due to error
+		for (auto m : ((Directory*)this)->children)
+			((Directory*)m.second)->search(res);
+	}
 };
 
 class FileSystem {
@@ -138,6 +153,12 @@ public:
             return "";
         return ((File*)curr)->readContent();
     }
+    
+    vector<string> searchFiles(){
+    	vector<string> res;
+    	root->search(res);
+    	return res;
+	}
 };
 
 
@@ -162,6 +183,12 @@ int main() {
 	
 	cout << fs.readContentFromFile("/a/b/c/test.txt") << endl;
 	cout << fs.readContentFromFile("/a/hw.out") << endl;
+	
+	cout << "----------------- List All Files ----------------" << endl;
+	vector<string> allFiles = fs.searchFiles();
+	for (string file : allFiles)
+		cout << file << ", ";
+	cout << endl;
 	
 	return 0;
 }
